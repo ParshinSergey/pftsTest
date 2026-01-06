@@ -1,14 +1,22 @@
 package ua.univer.pftsTest.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@RestController
+import java.net.http.HttpClient;
+
 public class BaseController {
 
+    public static final String TEST_URL = "https://nts-ml-vpn-uat.pfts.ua";
 
-    @GetMapping(value = "/v2/createClient")
-    public String createClientTest() {
-        return null;
+    Logger logger = LoggerFactory.getLogger(BaseController.class);
+
+    protected final HttpClient httpClient;
+
+    public BaseController(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
+
+
 }
+

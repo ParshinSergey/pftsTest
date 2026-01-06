@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ua.univer</groupId>
 	<artifactId>pftsTest</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>Test PFTS</name>
 	<description>Connector to PFTS Stock Exchange</description>
 	<url/>
