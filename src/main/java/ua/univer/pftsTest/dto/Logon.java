@@ -1,15 +1,16 @@
 package ua.univer.pftsTest.dto;
 
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.*;
 
 @XmlRootElement(name = "LOGON")
 public class Logon {
 
-
     private String firmid;
     private String msg;
     private int sid;
+
+    public Logon() {
+    }
 
     @XmlAttribute(name = "firmid")
     public String getFirmid() {

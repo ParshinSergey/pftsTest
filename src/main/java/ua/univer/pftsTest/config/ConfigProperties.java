@@ -11,10 +11,11 @@ public class ConfigProperties {
 
     private String hostName;
     private String url;
-    //private String sid = "0";
+    private String uid;
 
     public static String SERVER_HOST_NAME;
     public static String SERVER_URL;
+    public static String USER_UID;
     public static String USER_SID = "0";
 
 
@@ -28,8 +29,9 @@ public class ConfigProperties {
         SERVER_URL = url;
     }
 
-  /*  public void setSid(String sid) {
-        this.sid = sid;
-        USER_SID = sid;
-    }*/
+    public void setUid(String uid) {
+        this.uid = uid;
+        USER_UID = uid;
+    }
+
 }
