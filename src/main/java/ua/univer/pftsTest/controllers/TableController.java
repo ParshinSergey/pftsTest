@@ -16,8 +16,9 @@ import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/table")
 public class TableController extends BaseController{
+
 
     public TableController(HttpClient httpClient) {
         super(httpClient);
@@ -25,29 +26,11 @@ public class TableController extends BaseController{
 
 
     @Scheduled(fixedRate = 365*24*60*60, initialDelay = 25, timeUnit = TimeUnit.SECONDS)
-    @Scheduled(cron="0 6 8 * * MON-FRI")
+    @Scheduled(cron="40 59 8 * * MON-FRI")
     @PostMapping(value = "/v1/tesystime", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> teSysTime(){
 
         String xmlString = "<TESYSTIME/>";
-
-        return null;
-    }
-
-    @Scheduled(initialDelay = 70, timeUnit = TimeUnit.SECONDS)
-    @Scheduled(cron="0 */1 9-22 * * MON-FRI")
-    private void oneMinuteRefresh(){
-        String xmlString = "<REFRESH/>";
-        HttpRequest httpRequest = getHttpRequest(xmlString);
-        httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString());
-        logger.info("1 minute refresh");
-    }
-
-
-    @Scheduled(initialDelay = 60, timeUnit = TimeUnit.SECONDS)
-    @Scheduled(cron="0 0/30 9-22 * * MON-FRI")
-    private void halfHourCheck(){
-        String xmlString = "<REFRESH/>";
         HttpRequest httpRequest = getHttpRequest(xmlString);
         HttpResponse<String> httpResponse;
         try {
@@ -55,8 +38,47 @@ public class TableController extends BaseController{
         } catch (IOException | InterruptedException e) {
             throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage());
         }
-        logger.info("halfHourCheck {}", httpResponse.body());
-        logger.info("SID - {}", ConfigProperties.USER_SID);
+        logger.info("{} teSysTime ", httpResponse.body());
+
+        return ResponseEntity.ok().body(httpResponse.body());
+    }
+
+
+    @Scheduled(cron="*/30 * 9-21 * * MON-FRI")
+    private void refresh(){
+        String xmlString = "<REFRESH/>";
+        HttpRequest httpRequest = getHttpRequest(xmlString);
+        httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString());
+    }
+
+
+    @Scheduled(cron="0 0/15 9-21 * * MON-FRI")
+    private void quoterHourCheck(){
+        String xmlString = "<REFRESH/>";
+        HttpRequest httpRequest = getHttpRequest(xmlString);
+        HttpResponse<String> httpResponse;
+        try {
+            httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
+        }
+        logger.info("{} quoterHourCheck SID - {}", httpResponse.body(), ConfigProperties.USER_SID);
+    }
+
+
+    @PostMapping(value = "/v1/negdeals", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> negDeals(){
+        String xmlString = "<NEGDEALS/>";
+        HttpRequest httpRequest = getHttpRequest(xmlString);
+        HttpResponse<String> httpResponse;
+        try {
+            httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
+        }
+        logger.info(httpResponse.body());
+
+        return ResponseEntity.ok().body(httpResponse.body());
     }
 
 

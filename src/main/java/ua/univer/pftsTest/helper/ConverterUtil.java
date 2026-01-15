@@ -60,6 +60,7 @@ public class ConverterUtil {
             JAXBContext jc = JAXBContext.newInstance(objectClass);
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             marshaller.marshal(object, writer);
         }
         catch (JAXBException ex) {

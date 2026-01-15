@@ -12,11 +12,9 @@ import ua.univer.pftsTest.exeptions.PftsException;
 import ua.univer.pftsTest.helper.ConverterUtil;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -30,21 +28,11 @@ public class LoginController extends BaseController{
 
 
     @Scheduled(fixedRate = 365*24*60*60, initialDelay = 5, timeUnit = TimeUnit.SECONDS)
-    @Scheduled(cron="0 5 8 * * MON-FRI")
+    @Scheduled(cron="0 59 8 * * MON-FRI")
     @PostMapping (value = "/v1/logon", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> logon(){
 
-
         String xmlString = "<LOGON pwd=\"111          \" lang=\"U\" />";
-
-     /*   HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(TEST_URL))
-                .timeout(Duration.ofSeconds(30))
-                .POST(HttpRequest.BodyPublishers.ofString(xmlString))
-                .header("Content-Type", "application/xml")
-                .header("SID", ConfigProperties.USER_SID)
-                .header("UID", ConfigProperties.USER_UID)
-                .build();*/
 
         HttpRequest httpRequest = getHttpRequest(xmlString);
 
@@ -52,9 +40,8 @@ public class LoginController extends BaseController{
         try {
             httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage());
+            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
         }
-
 
         String response = httpResponse.body();
         if (httpResponse.statusCode() != 200) {
@@ -66,9 +53,6 @@ public class LoginController extends BaseController{
         if (response.contains("LOGON")){
             Logon obj = ConverterUtil.xmlToObject(response, Logon.class);
             ConfigProperties.USER_SID = String.valueOf(obj.getSid());
-
-            System.out.println("SID - " + ConfigProperties.USER_SID);
-            
             return ResponseEntity.ok().body(response);
         }
 
@@ -77,7 +61,7 @@ public class LoginController extends BaseController{
 
 
 
-    @Scheduled(cron="0 15 23 * * MON-FRI")
+    @Scheduled(cron="15 0 22 * * MON-FRI")
     @PostMapping (value = "/v1/logoff", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> logoff(){
 
@@ -98,7 +82,7 @@ public class LoginController extends BaseController{
             return ResponseEntity.badRequest().body(response);
         }
         ConfigProperties.USER_SID = "0";
-        logger.info("Метод Logoff {}", response);
+        logger.info("Method Logoff {}", response);
 
         return ResponseEntity.ok().body(response);
 

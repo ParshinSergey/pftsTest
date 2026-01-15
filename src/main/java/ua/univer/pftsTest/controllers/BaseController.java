@@ -12,7 +12,6 @@ import java.net.http.HttpRequest;
 import java.time.Duration;
 
 @RestController
-@RequestMapping(value = "/api")
 public class BaseController {
 
     public static final String TEST_URL = "https://nts-ml-vpn-uat.pfts.ua";
