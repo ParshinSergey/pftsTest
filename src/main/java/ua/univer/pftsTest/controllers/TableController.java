@@ -4,10 +4,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.univer.pftsTest.config.ConfigProperties;
 import ua.univer.pftsTest.exeptions.PftsException;
+import ua.univer.pftsTest.helper.ConverterUtil;
+import ua.univer.pftsTest.tables.Securities;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -22,6 +25,16 @@ public class TableController extends BaseController{
 
     public TableController(HttpClient httpClient) {
         super(httpClient);
+    }
+
+
+    @PostMapping(value = "/v1/closeTable", produces = MediaType.APPLICATION_XML_VALUE)
+    public void closeTable(@RequestBody String name){
+
+        String xmlString  = String.format("<CLOSE_TABLE table=\"%s\" />", name);
+        logger.info(xmlString);
+        var httpResponse = sendRequest(xmlString);
+        logger.info("{} closeTable ", httpResponse.body());
     }
 
 
@@ -44,42 +57,28 @@ public class TableController extends BaseController{
     }
 
 
-    @Scheduled(cron="*/30 * 9-21 * * MON-FRI")
-    private void refresh(){
-        String xmlString = "<REFRESH/>";
-        HttpRequest httpRequest = getHttpRequest(xmlString);
-        httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString());
-    }
-
-
-    @Scheduled(cron="0 0/15 9-21 * * MON-FRI")
-    private void quoterHourCheck(){
-        String xmlString = "<REFRESH/>";
-        HttpRequest httpRequest = getHttpRequest(xmlString);
-        HttpResponse<String> httpResponse;
-        try {
-            httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
-        }
-        logger.info("{} quoterHourCheck SID - {}", httpResponse.body(), ConfigProperties.USER_SID);
-    }
-
-
     @PostMapping(value = "/v1/negdeals", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> negDeals(){
         String xmlString = "<NEGDEALS/>";
-        HttpRequest httpRequest = getHttpRequest(xmlString);
-        HttpResponse<String> httpResponse;
-        try {
-            httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
-        }
+        var httpResponse = sendRequest(xmlString);
         logger.info(httpResponse.body());
 
         return ResponseEntity.ok().body(httpResponse.body());
     }
+
+
+
+
+    @PostMapping(value = "/v1/securities", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> securities(@RequestBody Securities form){
+        String xmlString = ConverterUtil.objectToXML(form);
+        logger.info("{} Request", xmlString);
+        var httpResponse = sendRequest(xmlString);
+        logger.info("{} securities ", httpResponse.body());
+
+        return ResponseEntity.ok().body(httpResponse.body());
+    }
+
 
 
 }

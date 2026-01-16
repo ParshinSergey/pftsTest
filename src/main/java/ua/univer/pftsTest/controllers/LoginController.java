@@ -33,7 +33,7 @@ public class LoginController extends BaseController{
     public ResponseEntity<String> logon(){
 
         String xmlString = "<LOGON pwd=\"111          \" lang=\"U\" />";
-
+        ConfigProperties.USER_SID = "0";
         HttpRequest httpRequest = getHttpRequest(xmlString);
 
         HttpResponse<String> httpResponse;
@@ -85,7 +85,34 @@ public class LoginController extends BaseController{
         logger.info("Method Logoff {}", response);
 
         return ResponseEntity.ok().body(response);
+    }
 
+
+
+    @Scheduled(cron="*/30 * 9-21 * * MON-FRI")
+    private void refresh(){
+        String xmlString = "<REFRESH/>";
+        HttpRequest httpRequest = getHttpRequest(xmlString);
+        httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString());
+    }
+
+
+    @Scheduled(cron="0 0/15 9-21 * * MON-FRI")
+    private void quoterHourCheck(){
+        String xmlString = "<REFRESH/>";
+        HttpRequest httpRequest = getHttpRequest(xmlString);
+        HttpResponse<String> httpResponse;
+        try {
+            httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
+        }
+
+        logger.info("{} quoterHourCheck SID - {}", httpResponse.body(), ConfigProperties.USER_SID);
+        if (httpResponse.statusCode() != 200 || httpResponse.body().contains("FATAL")){
+            logger.warn("Выполняется вход в Торговую Систему ПФТС");
+            logon();
+        }
 
     }
 

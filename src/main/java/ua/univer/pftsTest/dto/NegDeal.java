@@ -62,7 +62,7 @@ public class NegDeal {
     private String extref;
 
     @XmlAttribute(name = "acceptedorderno")
-    private int acceptedorderno;
+    private Integer acceptedorderno;
 
     @Size(max = 12)
     @XmlAttribute(name = "clientcode")

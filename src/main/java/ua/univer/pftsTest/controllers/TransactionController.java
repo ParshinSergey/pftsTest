@@ -29,20 +29,14 @@ public class TransactionController extends BaseController{
     public ResponseEntity<String> negDeal(@RequestBody @Valid NegDeal order){
 
         String xmlString = ConverterUtil.objectToXML(order);
-        logger.info("{} Request", xmlString);
-
-        HttpRequest httpRequest = getHttpRequest(xmlString);
-        HttpResponse<String> httpResponse;
-        try {
-            httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage());
-        }
+        logger.info(xmlString);
+        var httpResponse = sendRequest(xmlString);
         logger.info("{} negDeal ", httpResponse.body());
 
-
-        return ResponseEntity.ok().body(httpResponse.body());
+        return getResponseEntity(httpResponse.body());
     }
+
+
 
 
 }
