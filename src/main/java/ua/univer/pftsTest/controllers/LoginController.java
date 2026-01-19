@@ -40,7 +40,9 @@ public class LoginController extends BaseController{
         try {
             httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
+            //throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
+            logger.warn("Вход не выполнен !!!");
+            return ResponseEntity.internalServerError().body("Вход не выполнен !!!");
         }
 
         String response = httpResponse.body();
@@ -105,7 +107,7 @@ public class LoginController extends BaseController{
         try {
             httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage() + "\n конец сообщения");
+            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage());
         }
 
         logger.info("{} quoterHourCheck SID - {}", httpResponse.body(), ConfigProperties.USER_SID);

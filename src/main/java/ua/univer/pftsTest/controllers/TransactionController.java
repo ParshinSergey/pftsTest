@@ -7,14 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ua.pfts.midlay.Utils;
+import ua.pfts.midlay.utils.ExecutionException;
+import ua.univer.pftsTest.config.ConfigProperties;
 import ua.univer.pftsTest.dto.NegDeal;
-import ua.univer.pftsTest.exeptions.PftsException;
 import ua.univer.pftsTest.helper.ConverterUtil;
 
-import java.io.IOException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 @RestController
 @RequestMapping(value = "/api/transaction", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -35,6 +34,19 @@ public class TransactionController extends BaseController{
 
         return getResponseEntity(httpResponse.body());
     }
+
+/*
+    @PostMapping(value = "/v1/sign", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> negDeal(@RequestBody String words) throws ExecutionException {
+
+        final Utils utils = new Utils();
+        logger.info(words);
+
+        final String result = utils.signatureData(ConfigProperties.KEY_PATH, words);
+        logger.info(result);
+
+        return getResponseEntity(result);
+    }*/
 
 
 
