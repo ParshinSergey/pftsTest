@@ -11,10 +11,13 @@ import ua.univer.pftsTest.dto.Logon;
 import ua.univer.pftsTest.exeptions.PftsException;
 import ua.univer.pftsTest.helper.ConverterUtil;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -103,22 +106,57 @@ public class LoginController extends BaseController{
     private void quoterHourCheck(){
         String xmlString = "<REFRESH/>";
         HttpRequest httpRequest = getHttpRequest(xmlString);
-        HttpResponse<String> httpResponse;
+        HttpResponse<String> httpResponse = null;
         try {
             httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage());
+            logger.warn("Error connecting to PFTS");
         }
 
-        logger.info("{} quoterHourCheck SID - {}", httpResponse.body(), ConfigProperties.USER_SID);
-        if (httpResponse.statusCode() != 200 || httpResponse.body().contains("FATAL")){
-            logger.warn("Выполняется вход в Торговую Систему ПФТС");
-            logon();
+        if (httpResponse == null){
+            logger.warn("Probable problems with VPN. Try to connection.");
+            makeVpnConnection("rasdial \"PFTS1\" \"univercap2\" \"dBSY73nDJumer4\"");
         }
+        else {
+            logger.info("{} quoterHourCheck SID - {}", httpResponse.body(), ConfigProperties.USER_SID);
+            if (httpResponse.statusCode() != 200 || httpResponse.body().contains("FATAL")) {
+                logger.warn("Выполняется вход в Торговую Систему ПФТС");
+                logon();
+            }
+        }
+
+
+
+
+
+
+
 
     }
 
 
+    private static void makeVpnConnection(String command)  {
+        //Runtime.getRuntime().exec("rasdial \"PFTS1\" \"univercap2\" \"dBSY73nDJumer4\"");
+
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(command);
+            p.waitFor();
+        } catch (IOException | InterruptedException e) {
+            logger.warn("Ошибка при выполнении соединения VPN");
+            throw new RuntimeException(e);
+        }
+        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8));
+        String line;
+        try {
+            while ((line = br.readLine()) != null) {
+                logger.info(line);
+            }
+        }
+        catch (IOException e){
+            throw new RuntimeException(e);
+        }
+    }
 
 
 

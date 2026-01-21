@@ -1,9 +1,10 @@
 import ua.pfts.midlay.Utils;
+import ua.univer.pftsTest.config.ConfigProperties;
 
 
 public class SampleUsage {
     //path to  key file
-    private static final String KEY_FILE = "C:\\projects\\pftstest\\src\\main\\resources\\test.key";
+    private static final String KEY_FILE = ConfigProperties.KEY_PATH;
     //test password
     private static final String PWD = "qwerty123";
     //test tran data

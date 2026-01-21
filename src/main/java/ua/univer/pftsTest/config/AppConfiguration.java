@@ -2,6 +2,7 @@ package ua.univer.pftsTest.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ua.pfts.midlay.Utils;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -15,9 +16,11 @@ import java.util.Properties;
 @Configuration
 public class AppConfiguration {
 
-  /*  final static String PACKAGE = Request.class.getPackage().getName();
-    public final static String DIRECTORY = "INBOX_OUTBOX";*/
 
+    @Bean
+    public Utils getUtils(){
+        return new Utils();
+    }
 
 
     @Bean

@@ -45,11 +45,14 @@ public class TableController extends BaseController{
 
         String xmlString = "<TESYSTIME/>";
         HttpRequest httpRequest = getHttpRequest(xmlString);
-        HttpResponse<String> httpResponse;
+        HttpResponse<String> httpResponse = null;
         try {
             httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new PftsException("Error connecting to PFTS. Message - " + e.getMessage());
+            logger.warn("Error connecting to PFTS. Method TeSysTime");
+        }
+        if (httpResponse == null){
+            return ResponseEntity.status(522).body("Server is not responding");
         }
         logger.info("{} teSysTime ", httpResponse.body());
 

@@ -1,6 +1,7 @@
 package ua.univer.pftsTest.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +20,15 @@ import java.net.http.HttpClient;
 @RequestMapping(value = "/api/transaction", consumes = MediaType.APPLICATION_JSON_VALUE)
 public class TransactionController extends BaseController{
 
+    @Autowired
+    private Utils utils;
+
     public TransactionController(HttpClient httpClient) {
         super(httpClient);
     }
 
 
-    @PostMapping(value = "/v1/negDeal", produces = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/TEST/negDeal", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> negDeal(@RequestBody @Valid NegDeal order){
 
         String xmlString = ConverterUtil.objectToXML(order);
@@ -35,18 +39,17 @@ public class TransactionController extends BaseController{
         return getResponseEntity(httpResponse.body());
     }
 
-/*
+
     @PostMapping(value = "/v1/sign", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> negDeal(@RequestBody String words) throws ExecutionException {
 
-        final Utils utils = new Utils();
         logger.info(words);
 
         final String result = utils.signatureData(ConfigProperties.KEY_PATH, words);
         logger.info(result);
 
         return getResponseEntity(result);
-    }*/
+    }
 
 
 

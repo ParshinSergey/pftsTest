@@ -18,9 +18,7 @@ import java.time.Duration;
 @RestController
 public class BaseController {
 
-    public static final String TEST_URL = "https://nts-ml-vpn-uat.pfts.ua";
-
-    Logger logger = LoggerFactory.getLogger(BaseController.class);
+    static Logger logger = LoggerFactory.getLogger(BaseController.class);
 
     protected final HttpClient httpClient;
 
