@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ua.univer.pftsTest.helper.DoubleAdapter;
+import ua.univer.pftsTest.helper.DoubleAdapter4Digits;
 
 @Getter
 @Setter
@@ -39,6 +40,7 @@ public class NegDeal {
     @XmlAttribute(name = "cpfirmid")
     private String cpfirmid;
 
+    @XmlJavaTypeAdapter(DoubleAdapter4Digits.class)
     @XmlAttribute(name = "price")
     private double price;
 

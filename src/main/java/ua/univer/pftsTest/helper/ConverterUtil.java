@@ -81,7 +81,7 @@ public class ConverterUtil {
     @SuppressWarnings("unchecked")
     public static <T> T xmlToObject(String xmlStr, Class<T> clas){
 
-        xmlStr = xmlStr.trim().replaceFirst("^(\\W+)<","<");
+        // xmlStr = xmlStr.trim().replaceFirst("^(\\W+)<","<");
         T obj;
         try {
             JAXBContext context = JAXBContext.newInstance(clas);

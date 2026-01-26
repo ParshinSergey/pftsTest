@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "ROWS")
+@XmlRootElement(name = "ROWS", namespace = "")
 public class Rows {
 
     @XmlElement(name="SECURITIES", type=Securities.class)
