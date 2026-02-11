@@ -12,6 +12,7 @@ import ua.pfts.midlay.Utils;
 import ua.pfts.midlay.utils.ExecutionException;
 import ua.univer.pftsTest.config.ConfigProperties;
 import ua.univer.pftsTest.dto.NegDeal;
+import ua.univer.pftsTest.dto.Order;
 import ua.univer.pftsTest.helper.ConverterUtil;
 
 import java.net.http.HttpClient;
@@ -35,6 +36,18 @@ public class TransactionController extends BaseController{
         logger.info(xmlString);
         var httpResponse = sendRequest(xmlString);
         logger.info("{} negDeal ", httpResponse.body());
+
+        return getResponseEntity(httpResponse.body());
+    }
+
+
+    @PostMapping(value = "/TEST/order", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> order(@RequestBody @Valid Order order){
+
+        String xmlString = ConverterUtil.objectToXML(order);
+        logger.info(xmlString);
+        var httpResponse = sendRequest(xmlString);
+        logger.info("{} order ", httpResponse.body());
 
         return getResponseEntity(httpResponse.body());
     }

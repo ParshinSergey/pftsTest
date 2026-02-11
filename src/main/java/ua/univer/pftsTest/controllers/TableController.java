@@ -4,10 +4,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
-import ua.univer.pftsTest.config.ConfigProperties;
-import ua.univer.pftsTest.exeptions.PftsException;
+import ua.univer.pftsTest.dto.OrderBook;
 import ua.univer.pftsTest.helper.ConverterUtil;
 import ua.univer.pftsTest.helper.SecuritiesManager;
+import ua.univer.pftsTest.tables.CloseTable;
 import ua.univer.pftsTest.tables.Rows;
 import ua.univer.pftsTest.tables.Securities;
 
@@ -28,14 +28,18 @@ public class TableController extends BaseController{
     }
 
 
-    @PostMapping(value = "/v1/closeTable", produces = MediaType.APPLICATION_XML_VALUE)
-    public void closeTable(@RequestBody String name){
 
-        String xmlString  = String.format("<CLOSE_TABLE table=\"%s\" />", name);
+    @PostMapping(value = "/v1/closeTable", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> closeTable(@RequestBody CloseTable form){
+
+        String xmlString = ConverterUtil.objectToXML(form);
         logger.info(xmlString);
         var httpResponse = sendRequest(xmlString);
-        logger.info("{} closeTable ", httpResponse.body());
+        logger.info("{} closeTable", httpResponse.body());
+
+        return ResponseEntity.ok().body(httpResponse.body());
     }
+
 
 
     @Scheduled(fixedRate = 365*24*60*60, initialDelay = 25, timeUnit = TimeUnit.SECONDS)
@@ -68,6 +72,36 @@ public class TableController extends BaseController{
 
         return ResponseEntity.ok().body(httpResponse.body());
     }
+
+
+    @PostMapping(value = "/v1/ext_orderBook", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> orders(@RequestBody OrderBook form){
+        String xmlString = ConverterUtil.objectToXML(form);
+        logger.info("{} ext_orderBook", xmlString);
+        var httpResponse = sendRequest(xmlString);
+        logger.info(httpResponse.body());
+
+        return ResponseEntity.ok().body(httpResponse.body());
+    }
+
+
+    @PostMapping(value = "/TEST/ext_orderBook", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> orders2(@RequestBody OrderBook form){
+        String xmlString = ConverterUtil.objectToXML(form);
+        logger.info("{} ext_orderBook2", xmlString);
+        var httpResponse = sendRequest(xmlString);
+        logger.info(httpResponse.body());
+
+        Thread.ofVirtual().start(() -> {
+            CloseTable table = new CloseTable();
+            table.setRef(form.getRef());
+            table.setTable("EXT_ORDERBOOK");
+            closeTable(table);
+        });
+
+        return ResponseEntity.ok().body(httpResponse.body());
+    }
+
 
 
 
