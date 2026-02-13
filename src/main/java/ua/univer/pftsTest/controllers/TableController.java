@@ -64,11 +64,11 @@ public class TableController extends BaseController{
     }
 
 
-    @PostMapping(value = "/v1/negdeals", produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "/v1/negdeals", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> negDeals(){
         String xmlString = "<NEGDEALS/>";
+        logger.info("Table NEGDEALS");
         var httpResponse = sendRequest(xmlString);
-        logger.info(httpResponse.body());
 
         return ResponseEntity.ok().body(httpResponse.body());
     }
@@ -101,6 +101,25 @@ public class TableController extends BaseController{
 
         return ResponseEntity.ok().body(httpResponse.body());
     }
+
+
+    @GetMapping(value = "/TEST/trades", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> trades(){
+        String xmlString = "<TRADES/>";
+        logger.info("Table TRADES");
+        var httpResponse = sendRequest(xmlString);
+
+        Thread.ofVirtual().start(() -> {
+            CloseTable table = new CloseTable();
+            table.setTable("TRADES");
+            closeTable(table);
+        });
+
+        return ResponseEntity.ok().body(httpResponse.body());
+    }
+
+
+
 
 
 

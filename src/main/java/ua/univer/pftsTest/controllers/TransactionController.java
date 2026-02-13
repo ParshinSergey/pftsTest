@@ -12,6 +12,7 @@ import ua.pfts.midlay.Utils;
 import ua.pfts.midlay.utils.ExecutionException;
 import ua.univer.pftsTest.config.ConfigProperties;
 import ua.univer.pftsTest.dto.NegDeal;
+import ua.univer.pftsTest.dto.Ok;
 import ua.univer.pftsTest.dto.Order;
 import ua.univer.pftsTest.helper.ConverterUtil;
 
@@ -29,6 +30,18 @@ public class TransactionController extends BaseController{
     }
 
 
+    @PostMapping(value = "/v2/negDeal", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> negDeal2(@RequestBody @Valid NegDeal order){
+
+        String xmlString = ConverterUtil.objectToXML(order);
+        logger.info(xmlString);
+        var httpResponse = sendRequest(xmlString);
+        logger.info("{} negDeal2 ", httpResponse.body());
+
+        return getResponseEntity(httpResponse.body());
+    }
+
+
     @PostMapping(value = "/TEST/negDeal", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> negDeal(@RequestBody @Valid NegDeal order){
 
@@ -37,8 +50,17 @@ public class TransactionController extends BaseController{
         var httpResponse = sendRequest(xmlString);
         logger.info("{} negDeal ", httpResponse.body());
 
+        String answer = httpResponse.body();
+
+        if (answer.contains("OK")){
+            Ok ok = ConverterUtil.xmlToObject(answer, Ok.class);
+            ok.setOrder(ok.getMsg());
+            return getResponseEntity(ConverterUtil.objectToJson(ok));
+        }
+
         return getResponseEntity(httpResponse.body());
     }
+
 
 
     @PostMapping(value = "/TEST/order", produces = MediaType.APPLICATION_XML_VALUE)
